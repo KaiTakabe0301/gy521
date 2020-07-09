@@ -3,7 +3,7 @@
 import smbus            # use I2C
 import math
 from time import sleep  # time module
- 
+
 ### define #############################################################
 DEV_ADDR = 0x68         # device address
 PWR_MGMT_1 = 0x6b       # Power Management 1
@@ -14,17 +14,17 @@ TEMP_OUT = 0x41         # Temperature
 GYRO_XOUT = 0x43        # Gyro X-axis
 GYRO_YOUT = 0x45        # Gyro Y-axis
 GYRO_ZOUT = 0x47        # Gyro Z-axis
- 
+
 # 1byte read
 def read_byte( addr ):
     return bus.read_byte_data( DEV_ADDR, addr )
- 
+
 # 2byte read
 def read_word( addr ):
     high = read_byte( addr   )
     low  = read_byte( addr+1 )
     return (high << 8) + low
- 
+
 # Sensor data read
 def read_word_sensor( addr ):
     val = read_word( addr )
@@ -32,13 +32,13 @@ def read_word_sensor( addr ):
         return val # positive value
     else:
         return val - 65536 # negative value
- 
+
 # Get Temperature
 def get_temp():
     temp = read_word_sensor( TEMP_OUT )
     # offset = -521 @ 35℃
     return ( temp + 521 ) / 340.0 + 35.0
- 
+
 # Get Gyro data (raw value)
 def get_gyro_data_lsb():
     x = read_word_sensor( GYRO_XOUT )
@@ -53,7 +53,7 @@ def get_gyro_data_deg():
     y = y / 131.0
     z = z / 131.0
     return [ x, y, z ]
- 
+
 # Get Axel data (raw value)
 def get_accel_data_lsb():
     x = read_word_sensor( ACCEL_XOUT )
@@ -68,22 +68,21 @@ def get_accel_data_g():
     y = y / 16384.0
     z = z / 16384.0
     return [x, y, z]
- 
+
 ### Main function ######################################################
 bus = smbus.SMBus( 1 )
 bus.write_byte_data( DEV_ADDR, PWR_MGMT_1, 0 )
 while 1:
     temp = get_temp()
-    print 't= %.2f' % temp, '\t',
- 
+    print('t= %.2f' % temp, '\t', end='')
+
     gyro_x,gyro_y,gyro_z = get_gyro_data_deg()
-    print 'Gx= %.3f' % gyro_x, '\t',
-    print 'Gy= %.3f' % gyro_y, '\t',
-    print 'Gz= %.3f' % gyro_z, '\t',
- 
+    print('Gx= %.3f' % gyro_x, '\t',end='')
+    print('Gy= %.3f' % gyro_y, '\t',end='')
+    print('Gz= %.3f' % gyro_z, '\t',end='')
+
     accel_x,accel_y,accel_z = get_accel_data_g()
-    print 'Ax= %.3f' % accel_x, '\t',
-    print 'Ay= %.3f' % accel_y, '\t',
-    print 'Az= %.3f' % accel_z, '\t',
-    print # 改行
+    print('Ax= %.3f' % accel_x, '\t',end='')
+    print('Ay= %.3f' % accel_y, '\t',end='')
+    print('Az= %.3f' % accel_z, '\t')
     sleep( 1 )
