@@ -101,7 +101,7 @@ while 1:
     webhoos_url = 'http://192.168.24.117:5000'
     headers = {'from': 'i2c'}
     sensor_data = {
-        'rot_x': gyro_y,
+        'rot_x': gyro_x,
         'rot_y': gyro_y,
         'rot_z': gyro_z,
         'accel_x': accel_x,
